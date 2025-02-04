@@ -25,7 +25,7 @@
 
   <script>
     // 請填入你的 LINE Login Channel 的 Client ID
-    const clientId = "2003230907";
+    const clientId = 2003230907;
     // 請填入你的 Callback URL（需與 LINE Developers 中設定一致）
     const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
     // 授權範圍，這裡至少需要 openid 來取得 ID Token
@@ -36,7 +36,7 @@
     // LINE Login 的隱式授權端點
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
     // 組合登入 URL
-    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=123456`;
+    const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=123456`;
 
     // 當使用者點選「使用 LINE 登入」按鈕時，導向 LINE 登入頁面
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
