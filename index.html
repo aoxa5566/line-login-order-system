@@ -29,7 +29,7 @@
     // 請填入你的 Callback URL（需與 LINE Developers 中設定一致）
     const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
     // 授權範圍，這裡至少需要 openid 來取得 ID Token
-    const scope = "openid%20profile";
+    const scope = "profile%20openid%20email";
     // 狀態值，可隨機產生以防 CSRF 攻擊
     const state = "abfd2h567t23hcdef"; // 為簡單示例，實際建議使用隨機字串
 
