@@ -25,18 +25,22 @@
 
   <script>
     // 請填入你的 LINE Login Channel 的 Client ID
-    const clientId = 2003230907;
+    const clientId = 2003230907; // 確保是數字格式
     // 請填入你的 Callback URL（需與 LINE Developers 中設定一致）
-    const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
+    const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/"); // 確保與 LINE Developers 設定一致
     // 授權範圍，這裡至少需要 openid 來取得 ID Token
-    const scope = "profile%20openid%20email";
+    const scope = "profile%20openid%20email"; // 確保 `openid` 存在
     // 狀態值，可隨機產生以防 CSRF 攻擊
     const state = "fd2h56"; // 為簡單示例，實際建議使用隨機字串
+
+    const state = Math.random().toString(36).substring(2); // 產生隨機狀態值
+    const nonce = Math.random().toString(36).substring(2); // 產生隨機 nonce
+
 
     // LINE Login 的隱式授權端點
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
     // 組合登入 URL
-    const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=123456`;
+    const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
     // 當使用者點選「使用 LINE 登入」按鈕時，導向 LINE 登入頁面
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
@@ -68,7 +72,8 @@
       const params = getHashParams();
       if (params.id_token) {
         // 移除登入按鈕
-        document.getElementById("content").innerHTML = "";
+        document.getElementById("loginBtn").setAttribute("href", loginUrl);
+        //document.getElementById("content").innerHTML = "";
         // 解析 id_token 取得使用者資料
         const jwtPayload = parseJwt(params.id_token);
         // 使用者 ID 存在 jwtPayload.sub（LINE 的使用者 ID）
