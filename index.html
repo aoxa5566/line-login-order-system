@@ -26,65 +26,46 @@
   <!-- 這裡放置你的 JavaScript 代碼 -->
   <script>  
    // 請填入你的 LINE Login Channel 的 Client ID
-const clientId = 2003230907; // 用你的 Channel ID 替換
-const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/"); // 用你的回調 URL 替換
-const scope = "openid%20profile%20email";  // 根據需求設定範圍
-const state = "randomState123"; // 隨機生成的狀態字串，用來防止 CSRF 攻擊
-const nonce = "randomNonce456";
+   const clientId = 2003230907; // 用你的 Channel ID 替換
+   const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/"); // 用你的回調 URL 替換
+   const scope = "openid%20profile%20email";  // 根據需求設定範圍
+   const state = "randomState123"; // 隨機生成的狀態字串，用來防止 CSRF 攻擊
+   const nonce = "randomNonce456";
 
-const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
-const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
-console.log("Login URL:", loginUrl);
-document.getElementById("loginBtn").setAttribute("href", loginUrl);
+   const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
+   const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
+   console.log("Login URL:", loginUrl);
+   document.getElementById("loginBtn").setAttribute("href", loginUrl);
 
 
-// 解析 hash 參數來獲取 id_token
-function getHashParams() {
-  const hash = window.location.hash.substring(1);  // 去掉 '#'
-  const params = {};
-  hash.split('&').forEach(kv => {
-    const [key, value] = kv.split('=');
-    params[key] = value;
-  });
-  return params;
-}
+   // 解析 URL 參數來獲取授權碼
+   function getQueryParams() {
+     const params = new URLSearchParams(window.location.search);
+     return {
+       code: params.get('code'),
+       state: params.get('state'),
+       error: params.get('error')
+     };
+   }
 
-// 解析 JWT 來取得用戶資料
-function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-  return JSON.parse(jsonPayload);
-}
+   // 當頁面加載時檢查是否有授權碼
+   window.addEventListener('load', () => {
+     const params = getQueryParams();
+     if (params.code) {
+       // 顯示授權碼
+       const div = document.createElement("div");
+       div.innerHTML = `<p>授權碼為：<strong>${params.code}</strong></p>`;
+       
+       // 可以在這裡處理授權碼，將它發送給你的後端來換取 Access Token 和 ID Token
 
-// 監聽頁面加載事件
-window.addEventListener('load', () => {
-  const params = getHashParams();
-  if (params.id_token) {
-    // 解析 id_token 來獲得用戶資料
-    const jwtPayload = parseJwt(params.id_token);
-    const userId = jwtPayload.sub;  // 用戶的 LINE ID
-
-    // 顯示歡迎信息
-    const div = document.createElement("div");
-    div.innerHTML = `<p>歡迎，您的 UserID 為：<strong>${userId}</strong></p>`;
-
-    // 生成 Google 表單的連結
-    let baseFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeuFye0vGSFTwsciSoFpZt8fbIT-d2pjw1VgPoBQ8oV4xy2tw/viewform?usp=pp_url&entry.1942883731=LINE_USER_ID";
-    let formUrl = baseFormUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
-
-    // 顯示表單的連結
-    const linkButton = document.createElement('a');
-    linkButton.href = formUrl;
-    linkButton.textContent = "點此進入訂購表單";
-    linkButton.className = "button";
-    div.appendChild(linkButton);
-
-    document.getElementById("content").appendChild(div);
-  }
-});
+       document.getElementById("content").appendChild(div);
+     } else if (params.error) {
+       // 顯示錯誤訊息
+       const div = document.createElement("div");
+       div.innerHTML = `<p>錯誤：<strong>${params.error}</strong></p>`;
+       document.getElementById("content").appendChild(div);
+     }
+   });
   </script>
 </body>
 </html>
