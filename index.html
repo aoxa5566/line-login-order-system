@@ -25,6 +25,48 @@
 
   <!-- 這裡放置你的 JavaScript 代碼 -->
   <script>
+    window.addEventListener('load', () => {
+  const params = getHashParams();
+  console.log("Hash Params:", params);  // 檢查 URL 中的 hash 參數
+
+  if (params.id_token) {
+    // 解析 id_token 獲取用戶資料
+    const jwtPayload = parseJwt(params.id_token);
+    console.log("JWT Payload:", jwtPayload);  // 檢查解析出的 JWT 資料
+
+    const userId = jwtPayload.sub;  // LINE 的用戶 ID
+    const userName = jwtPayload.name;  // 用戶名稱
+    const userEmail = jwtPayload.email;  // 用戶郵箱
+
+    // 顯示用戶資訊
+    const div = document.createElement("div");
+    div.innerHTML = `<p>歡迎，您的用戶 ID 為：<strong>${userId}</strong></p>`;
+    div.innerHTML += `<p>您的名稱為：<strong>${userName}</strong></p>`;
+    div.innerHTML += `<p>您的電子郵件為：<strong>${userEmail}</strong></p>`;
+
+    // 生成 Google 表單連結，並將 LINE userId 作為預填項目
+    let baseFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeuFye0vGSFTwsciSoFpZt8fbIT-d2pjw1VgPoBQ8oV4xy2tw/viewform?usp=pp_url&entry.1942883731=LINE_USER_ID";
+    let formUrl = baseFormUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
+
+    // 加入一個按鈕，讓用戶可以點擊進入 Google 表單
+    const linkButton = document.createElement('a');
+    linkButton.href = formUrl;
+    linkButton.textContent = "點此進入訂購表單";
+    linkButton.className = "button";
+    div.appendChild(linkButton);
+
+    // 顯示用戶資料和表單連結
+    document.getElementById("content").appendChild(div);
+  } else {
+    console.log("id_token 不存在");  // 如果沒有 id_token，檢查是否正確解析 URL
+  }
+});
+
+
+
+
+
+    
     // 請確認這些變數的值正確設定
     const clientId = 2003230907; // 這是你的 LINE Login Channel ID
     const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/"); // 這是你的回調 URL
