@@ -36,10 +36,11 @@
     const nonce = "randomNonce456";
 
     // 產生 LINE 登入 URL
-    const lineAuthUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
+    const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
+    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
     // 設定登入按鈕的連結
-    document.getElementById("loginBtn").setAttribute("href", loginUrl)
+    document.getElementById("loginBtn").setAttribute("href", loginUrl);
 
     // 解析 URL Fragment（取得 `id_token`）
     function getHashParams() {
