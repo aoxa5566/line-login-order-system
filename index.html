@@ -40,8 +40,6 @@
     // 組合登入 URL
     const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
-    console.log("Login URL:", loginUrl);
-
     // 當使用者點選「使用 LINE 登入」按鈕時，導向 LINE 登入頁面
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
 
