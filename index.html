@@ -27,11 +27,11 @@
     // 請填入你的 LINE Login Channel 的 Client ID
     const clientId = "YOUR_LINE_LOGIN_CHANNEL_ID";
     // 請填入你的 Callback URL（需與 LINE Developers 中設定一致）
-    const redirectUri = encodeURIComponent("https://你的GitHub使用者名稱.github.io/line-login-order-system/");
+    const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
     // 授權範圍，這裡至少需要 openid 來取得 ID Token
     const scope = "openid%20profile";
     // 狀態值，可隨機產生以防 CSRF 攻擊
-    const state = "abcdef"; // 為簡單示例，實際建議使用隨機字串
+    const state = "abfd2h567t23hcdef"; // 為簡單示例，實際建議使用隨機字串
 
     // LINE Login 的隱式授權端點
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
@@ -81,7 +81,7 @@
         // 生成預填 Google 表單連結
         // 請先在 Google 表單中建立「LINE UserID」欄位並取得預填連結範本
         // 範例如下（請替換你的 Google 表單 ID 及 entry ID）：
-        let baseFormUrl = "https://docs.google.com/forms/d/e/你的表單ID/viewform?usp=pp_url&entry.1234567890=LINE_USER_ID";
+        let baseFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeuFye0vGSFTwsciSoFpZt8fbIT-d2pjw1VgPoBQ8oV4xy2tw/viewform?usp=pp_url&entry.1942883731=LINE_USER_ID";
         let formUrl = baseFormUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
 
         // 加入一個按鈕連結到表單
