@@ -31,8 +31,14 @@ const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-or
 const scope = "profile%20openid%20email";  // 你需要的授權範圍
 const state = "fd2h56"; // 隨機生成的狀態字串，用來防止 CSRF 攻擊
 
-const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
-const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=123456`;
+const state = "randomState123";  // 防範 CSRF 攻擊
+    const nonce = "randomNonce456";  // 用於防範重播攻擊
+
+    // LINE 登入的授權端點
+    const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
+
+    // 組合登入 URL
+    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
 // 設置登入按鈕的連結
 document.getElementById("loginBtn").setAttribute("href", loginUrl);
