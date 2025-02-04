@@ -2,19 +2,17 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>訂貨系統 - LINE Login</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; text-align: center; }
+    body { font-family: Arial, sans-serif; margin: 2em; }
     .button {
       display: inline-block;
-      padding: 10px 20px;
+      padding: 0.5em 1em;
       background-color: #00c300;
       color: #fff;
       text-decoration: none;
       border-radius: 5px;
-      font-size: 16px;
-      margin-top: 20px;
+      margin-top: 1em;
     }
   </style>
 </head>
@@ -25,75 +23,19 @@
   </div>
 
   <script>
-    // ⚡ 請填入你的 LINE Login Channel ID
-    const clientId = 2003230907;
-    // ⚡ 請填入你的 GitHub Pages Callback URL，必須與 LINE Developers 設定相同
+    // 確保 clientId 正確
+    const clientId = 2003230907; // 請填入你的 LINE Login Channel ID
     const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
-    // 授權範圍（需 openid 來獲取 UserID）
     const scope = "profile%20openid%20email";
-    // CSRF 防護機制
-    const state = "randomState123";
-    const nonce = "randomNonce456";
+    const state = "randomState123"; // 建議用隨機字串
+    const nonce = "randomNonce456"; // 防止重播攻擊
 
-    // 產生 LINE 登入 URL
+    // LINE Login 授權 URL
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
     const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
-    // 設定登入按鈕的連結
+    // 設定按鈕的 href，確保不會發生 `loginUrl is not defined` 錯誤
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
-
-    // 解析 URL Fragment（取得 `id_token`）
-    function getHashParams() {
-      const hash = window.location.hash.substring(1);
-      const params = {};
-      hash.split('&').forEach(kv => {
-        const [key, value] = kv.split('=');
-        params[key] = value;
-      });
-      return params;
-    }
-
-    // 解析 JWT Token（Base64 解碼）
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
-        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      ).join(''));
-      return JSON.parse(jsonPayload);
-    }
-
-    // **⚡ 設定 Google 表單 URL**
-    // 請先到 Google 表單取得「預填連結」，再替換 entry ID
-    const googleFormBaseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeuFye0vGSFTwsciSoFpZt8fbIT-d2pjw1VgPoBQ8oV4xy2tw/viewform?usp=pp_url&entry.1942883731=LINE_USER_ID";
-
-    // **頁面載入時檢查是否已登入**
-    window.addEventListener('load', () => {
-      let params = getHashParams();
-      let idToken = params.id_token || localStorage.getItem("id_token");
-
-      if (idToken) {
-        // 儲存 `id_token`，避免重整後遺失
-        localStorage.setItem("id_token", idToken);
-        
-        // 解析 `id_token` 取得 `UserID`
-        const jwtPayload = parseJwt(idToken);
-        const userId = jwtPayload.sub;
-
-        // **顯示歡迎資訊**
-        document.getElementById("content").innerHTML = `<p>歡迎，您的 UserID 為：<strong>${userId}</strong></p>`;
-
-        // **自動填入 Google 表單**
-        const formUrl = googleFormBaseUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
-
-        // **加入訂購表單按鈕**
-        const linkButton = document.createElement('a');
-        linkButton.href = formUrl;
-        linkButton.textContent = "點此進入訂購表單";
-        linkButton.className = "button";
-        document.getElementById("content").appendChild(linkButton);
-      }
-    });
   </script>
 </body>
 </html>
