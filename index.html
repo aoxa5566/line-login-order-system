@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -27,8 +27,8 @@
     const clientId = 2003230907; // 請填入你的 LINE Login Channel ID
     const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
     const scope = "profile%20openid%20email";
-    const state = "randomState123"; // 建議用隨機字串
-    const nonce = "randomNonce456"; // 防止重播攻擊
+    const state = Math.random().toString(36).substring(2); // 產生隨機狀態值
+    const nonce = Math.random().toString(36).substring(2); // 產生隨機 nonce
 
     // LINE Login 授權 URL
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
