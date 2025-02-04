@@ -25,14 +25,16 @@
   <script>
     // 確保 clientId 正確
     const clientId = 2003230907; // 請填入你的 LINE Login Channel ID
-    const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/");
+    const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/"); // 這是你的回調 URL
     const scope = "profile%20openid%20email";
     const state = Math.random().toString(36).substring(2); // 產生隨機狀態值
     const nonce = Math.random().toString(36).substring(2); // 產生隨機 nonce
 
     // LINE Login 授權 URL
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
-    const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
+    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
+    
+    console.log("Login URL:", loginUrl);
 
     // 設定按鈕的 href，確保不會發生 `loginUrl is not defined` 錯誤
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
