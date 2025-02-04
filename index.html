@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -32,7 +32,7 @@
 
     // LINE Login 授權 URL
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
-    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
+    const loginUrl = `${lineAuthEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
     // 設定按鈕的 href，確保不會發生 `loginUrl is not defined` 錯誤
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
