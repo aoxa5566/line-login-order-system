@@ -63,11 +63,14 @@
     window.addEventListener('load', () => {
       const params = getHashParams();
       if (params.code) {
+        // 顯示授權碼
+        const div = document.createElement("div");
+        div.innerHTML = `<p>授權碼為：<strong>${params.code}</strong></p>`;
+        document.getElementById("content").appendChild(div);
+
         // 交換授權碼，獲取 access_token 和 id_token
         const code = params.code;
-
-        // 請替換成你自己的 Client Secret
-        const clientSecret = "6af97fc72d24dcd5d99a0b0d25fe1cca"; 
+        const clientSecret = "6af97fc72d24dcd5d99a0b0d25fe1cca";  // 替換為自己的 Client Secret
         const tokenUrl = "https://api.line.me/oauth2/v2.1/token";
         const body = new URLSearchParams();
         body.append("grant_type", "authorization_code");
@@ -85,28 +88,47 @@
         })
         .then((response) => response.json())
         .then((data) => {
-          // 解析 ID Token
-          const jwtPayload = parseJwt(data.id_token);
-          const userId = jwtPayload.sub;  // 用戶的 LINE ID
+          console.log("Token response:", data);  // 輸出返回的 Token 資料
+          if (data.id_token) {
+            // 解析 ID Token
+            const jwtPayload = parseJwt(data.id_token);
+            console.log("JWT Payload:", jwtPayload);  // 輸出解析後的 JWT 資料
+            const userId = jwtPayload.sub;  // 用戶的 LINE ID
 
-          // 顯示歡迎信息
-          const div = document.createElement("div");
-          div.innerHTML = `<p>歡迎，您的 UserID 為：<strong>${userId}</strong></p>`;
+            // 顯示歡迎信息
+            const div = document.createElement("div");
+            div.innerHTML = `<p>歡迎，您的 UserID 為：<strong>${userId}</strong></p>`;
 
-          // 生成 Google 表單的連結
-          let baseFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeuFye0vGSFTwsciSoFpZt8fbIT-d2pjw1VgPoBQ8oV4xy2tw/viewform?usp=pp_url&entry.1942883731=LINE_USER_ID";
-          let formUrl = baseFormUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
+            // 生成 Google 表單的連結
+            let baseFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeuFye0vGSFTwsciSoFpZt8fbIT-d2pjw1VgPoBQ8oV4xy2tw/viewform?usp=pp_url&entry.1942883731=LINE_USER_ID";
+            let formUrl = baseFormUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
 
-          // 顯示表單的連結
-          const linkButton = document.createElement('a');
-          linkButton.href = formUrl;
-          linkButton.textContent = "點此進入訂購表單";
-          linkButton.className = "button";
-          div.appendChild(linkButton);
+            // 顯示表單的連結
+            const linkButton = document.createElement('a');
+            linkButton.href = formUrl;
+            linkButton.textContent = "點此進入訂購表單";
+            linkButton.className = "button";
+            div.appendChild(linkButton);
 
-          document.getElementById("content").appendChild(div);
+            document.getElementById("content").appendChild(div);
+          } else {
+            console.error("ID Token not received");
+            const div = document.createElement("div");
+            div.innerHTML = `<p>未能獲取 ID Token。</p>`;
+            document.getElementById("content").appendChild(div);
+          }
         })
-        .catch((error) => console.error("Error exchanging code for token:", error));
+        .catch((error) => {
+          console.error("Error exchanging code for token:", error);
+          const div = document.createElement("div");
+          div.innerHTML = `<p>交換授權碼時發生錯誤。</p>`;
+          document.getElementById("content").appendChild(div);
+        });
+      } else if (params.error) {
+        // 顯示錯誤訊息
+        const div = document.createElement("div");
+        div.innerHTML = `<p>錯誤：<strong>${params.error}</strong></p>`;
+        document.getElementById("content").appendChild(div);
       }
     });
   </script>
