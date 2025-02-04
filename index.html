@@ -28,7 +28,7 @@
    // 請填入你的 LINE Login Channel 的 Client ID
 const clientId = 2003230907; // 用你的 Channel ID 替換
 const redirectUri = encodeURIComponent("https://aoxa5566.github.io/line-login-order-system/"); // 用你的回調 URL 替換
-const scope = "profile%20openid%20email";  // 根據需求設定範圍
+const scope = "openid%20profile%20email";  // 根據需求設定範圍
 const state = "randomState123"; // 隨機生成的狀態字串，用來防止 CSRF 攻擊
 const nonce = "randomNonce456";
 
