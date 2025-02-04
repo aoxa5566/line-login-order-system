@@ -39,7 +39,7 @@
     const lineAuthUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
 
     // 設定登入按鈕的連結
-    document.getElementById("loginBtn").setAttribute("href", lineAuthUrl);
+    document.getElementById("loginBtn").setAttribute("href", loginUrl)
 
     // 解析 URL Fragment（取得 `id_token`）
     function getHashParams() {
