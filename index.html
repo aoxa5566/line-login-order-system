@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>訂貨系統 - LINE Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    .button {
+      display: inline-block;
+      padding: 0.5em 1em;
+      background-color: #00c300;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h2>訂貨系統 - LINE Login</h2>
+  <div id="content">
+    <!-- 預設顯示 Login 按鈕 -->
+    <a id="loginBtn" class="button" href="#">使用 LINE 登入</a>
+  </div>
+
+  <script>
+    // 請填入你的 LINE Login Channel 的 Client ID
+    const clientId = "YOUR_LINE_LOGIN_CHANNEL_ID";
+    // 請填入你的 Callback URL（需與 LINE Developers 中設定一致）
+    const redirectUri = encodeURIComponent("https://你的GitHub使用者名稱.github.io/line-login-order-system/");
+    // 授權範圍，這裡至少需要 openid 來取得 ID Token
+    const scope = "openid%20profile";
+    // 狀態值，可隨機產生以防 CSRF 攻擊
+    const state = "abcdef"; // 為簡單示例，實際建議使用隨機字串
+
+    // LINE Login 的隱式授權端點
+    const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
+    // 組合登入 URL
+    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=123456`;
+
+    // 當使用者點選「使用 LINE 登入」按鈕時，導向 LINE 登入頁面
+    document.getElementById("loginBtn").setAttribute("href", loginUrl);
+
+    // 當使用者授權後，LINE 會透過 URL Fragment 回傳 id_token
+    // 例如：https://你的GitHub使用者名稱.github.io/line-login-order-system/#id_token=xxx&state=abcdef&... 
+    function getHashParams() {
+      const hash = window.location.hash.substring(1);
+      const params = {};
+      hash.split('&').forEach(kv => {
+        const [key, value] = kv.split('=');
+        params[key] = value;
+      });
+      return params;
+    }
+
+    // 解析 JWT 的 payload
+    function parseJwt (token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    };
+
+    // 檢查 URL 是否包含 id_token
+    window.addEventListener('load', () => {
+      const params = getHashParams();
+      if (params.id_token) {
+        // 移除登入按鈕
+        document.getElementById("content").innerHTML = "";
+        // 解析 id_token 取得使用者資料
+        const jwtPayload = parseJwt(params.id_token);
+        // 使用者 ID 存在 jwtPayload.sub（LINE 的使用者 ID）
+        const userId = jwtPayload.sub;
+
+        // 顯示歡迎資訊與預填 Google 表單的連結
+        const div = document.createElement("div");
+        div.innerHTML = `<p>歡迎，您的 UserID 為：<strong>${userId}</strong></p>`;
+
+        // 生成預填 Google 表單連結
+        // 請先在 Google 表單中建立「LINE UserID」欄位並取得預填連結範本
+        // 範例如下（請替換你的 Google 表單 ID 及 entry ID）：
+        let baseFormUrl = "https://docs.google.com/forms/d/e/你的表單ID/viewform?usp=pp_url&entry.1234567890=LINE_USER_ID";
+        let formUrl = baseFormUrl.replace("LINE_USER_ID", encodeURIComponent(userId));
+
+        // 加入一個按鈕連結到表單
+        const linkButton = document.createElement('a');
+        linkButton.href = formUrl;
+        linkButton.textContent = "點此進入訂購表單";
+        linkButton.className = "button";
+        div.appendChild(linkButton);
+
+        document.getElementById("content").appendChild(div);
+      }
+    });
+  </script>
+</body>
+</html>
