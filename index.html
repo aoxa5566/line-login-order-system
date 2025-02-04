@@ -31,18 +31,18 @@
 
     // 確保 URL 正確組合
     const scope = "profile%20openid%20email";  // 請確認需要的範圍
-    const state = "randomState123";  // 防範 CSRF 攻擊
+    const state = "fd2h56";  // 防範 CSRF 攻擊
     const nonce = "randomNonce456";  // 用於防範重播攻擊
 
     // LINE 登入的授權端點
     const lineAuthEndpoint = "https://access.line.me/oauth2/v2.1/authorize";
 
     // 組合登入 URL
-    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=${nonce}`;
-
+    const loginUrl = `${lineAuthEndpoint}?response_type=id_token&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&nonce=123456`;
+    
     // 當使用者點選「使用 LINE 登入」按鈕時，導向 LINE 登入頁面
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
-
+    
     // 解析 URL 中的 hash 參數
     function getHashParams() {
       const hash = window.location.hash.substring(1);  // 去掉 '#'
