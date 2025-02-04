@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
   <title>訂貨系統 - LINE Login</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 2em; }
@@ -23,7 +23,6 @@
     <a id="loginBtn" class="button" href="#">使用 LINE 登入</a>
   </div>
 
-  <!-- 這裡放置你的 JavaScript 代碼 -->
   <script>
     // 請填入你的 LINE Login Channel 的 Client ID
     const clientId = 2003230907; // 用你的 Channel ID 替換
@@ -38,15 +37,14 @@
     // 設定登入按鈕的連結
     document.getElementById("loginBtn").setAttribute("href", loginUrl);
 
-    // 解析 hash 參數來獲取 id_token
-    function getHashParams() {
-      const hash = window.location.hash.substring(1);  // 去掉 '#'
-      const params = {};
-      hash.split('&').forEach(kv => {
-        const [key, value] = kv.split('=');
-        params[key] = value;
-      });
-      return params;
+    // 解析 URL 參數來獲取授權碼
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        code: params.get('code'),
+        state: params.get('state'),
+        error: params.get('error')
+      };
     }
 
     // 解析 JWT 來取得用戶資料
@@ -61,7 +59,9 @@
 
     // 當頁面加載完成後執行
     window.addEventListener('load', () => {
-      const params = getHashParams();
+      const params = getQueryParams();
+      console.log("授權碼參數：", params);  // 確認拿到的參數
+
       if (params.code) {
         // 顯示授權碼
         const div = document.createElement("div");
@@ -79,6 +79,7 @@
         body.append("client_id", clientId);
         body.append("client_secret", clientSecret);
 
+        // 請求 token
         fetch(tokenUrl, {
           method: "POST",
           body: body,
@@ -88,11 +89,11 @@
         })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Token response:", data);  // 輸出返回的 Token 資料
+          console.log("Token response:", data);  // 顯示 token 回應
           if (data.id_token) {
             // 解析 ID Token
             const jwtPayload = parseJwt(data.id_token);
-            console.log("JWT Payload:", jwtPayload);  // 輸出解析後的 JWT 資料
+            console.log("JWT Payload:", jwtPayload);  // 顯示解析後的 JWT 資料
             const userId = jwtPayload.sub;  // 用戶的 LINE ID
 
             // 顯示歡迎信息
